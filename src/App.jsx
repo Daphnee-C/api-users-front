@@ -6,8 +6,8 @@ const App = () => {
   const [users, setUsers] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [lastname, setLastname] = useState("");
   const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
   const [telephone, setTelephone] = useState("");
   const [address, setAddress] = useState("");
 
@@ -26,8 +26,8 @@ const App = () => {
   const handleNewUsers = async (e) => {
     e.preventDefault();
     const newUser = await axios.post(`http://localhost:8000/api/users`, {
-      lastname,
       firstname,
+      lastname,
       telephone,
       address,
     });
@@ -49,18 +49,18 @@ const App = () => {
         users.map((user) => {
           return (
             <div key={user.id}>
-              <p>Lastname : {user.lastName}</p>
-              <p>Firstname: {user.firstName}</p>
+              <p>Firstname: {user.firstname}</p>
+              <p>Lastname : {user.lastname}</p>
               <p>Telephone : {user.telephone}</p>
               <p>Addresse : {user.address}</p>
             </div>
           );
         })}
       <form onSubmit={handleNewUsers}>
-        <label htmlFor="">Nom:</label>
-        <input type="text" onChange={(e) => setLastname(e.target.value)} />
         <label htmlFor="">Prénom:</label>
         <input type="text" onChange={(e) => setFirstname(e.target.value)} />
+        <label htmlFor="">Nom:</label>
+        <input type="text" onChange={(e) => setLastname(e.target.value)} />
         <label htmlFor="">Téléphone:</label>
         <input type="text" onChange={(e) => setTelephone(e.target.value)} />
         <label htmlFor="">Adresse:</label>
