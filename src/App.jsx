@@ -3,48 +3,80 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const App = () => {
-  const [count, setCount] = useState(29);
+  // const [count, setCount] = useState(29);
   const [users, setUsers] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [lastname, setLastname] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [telephone, setTelephone] = useState("");
+  const [address, setAddress] = useState("");
 
-  const myName = "Daphnée";
+  // const myName = "Daphnée";
 
-  const [displayError, setDisplayError] = useState(false);
+  // const [displayError, setDisplayError] = useState(false)
 
   const fetchApi = async () => {
     try {
       const response = await axios.get(`http://localhost:8000/api/users`);
       setUsers(response.data);
     } catch (error) {
-      setDisplayError(true);
+      console.log(error.message);
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleNewUsers = async (e) => {
+    e.preventDefault();
+    const newUser = await axios.post(`http://localhost:8000/api/users`, {
+      lastname,
+      firstname,
+      telephone,
+      address,
+    });
+    fetchApi();
   };
 
   useEffect(() => {
     fetchApi();
-    console.log(users);
-  }, [count]);
+    // console.log(users);
+  }, []);
+
+  if (loading) return <h1>Chargement...</h1>;
+  if (error) return <h1>{error}</h1>;
 
   return (
     <>
       <h1 className="myH1">Hello world</h1>
-      <p>
+      {/* <p> 
         Hello my name is {myName} and i am {count}
-      </p>
-      <button onClick={() => setCount(count + 1)}>+1</button>
-      {!users ? (
-        <p>chargement</p>
-      ) : displayError ? (
-        <p>une erreur est survenue</p>
-      ) : (
-        users.map((user, index) => {
+      </p> */}
+      {/* <button onClick={() => setCount(count + 1)}>+1</button> */}
+      {users &&
+        !loading &&
+        users.map((user) => {
           return (
-            <div key={index}>
-              <h3>Lastname : {user.lastName}</h3>
-              <h4>Firstname: {user.firstName}</h4>
+            <div key={user.id}>
+              <p>Lastname : {user.lastName}</p>
+              <p>Firstname: {user.firstName}</p>
+              <p>Telephone : {user.telephone}</p>
+              <p>Addresse : {user.address}</p>
             </div>
           );
-        })
-      )}
+        })}
+      <form onSubmit={handleNewUsers}>
+        <label htmlFor="">Nom:</label>
+        <input type="text" onChange={(e) => setLastname(e.target.value)} />
+        <label htmlFor="">Prénom:</label>
+        <input type="text" onChange={(e) => setFirstname(e.target.value)} />
+        <label htmlFor="">Téléphone:</label>
+        <input type="text" onChange={(e) => setTelephone(e.target.value)} />
+        <label htmlFor="">Adresse:</label>
+        <input type="text" onChange={(e) => setAddress(e.target.value)} />
+        <input type="submit" />
+      </form>
     </>
   );
 };
